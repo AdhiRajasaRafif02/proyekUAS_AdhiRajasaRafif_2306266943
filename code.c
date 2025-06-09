@@ -3,6 +3,11 @@
  * --------------------------------
  * Nama: Adhi Rajasa Rafif
  * NPM: 2306266943
+ * 
+ * Program ini mengimplementasikan analisis rangkaian dioda menggunakan:
+ * 1. Metode Taylor Series (Order 2)
+ * 2. Metode Picard (3 iterasi)
+ * untuk menghitung karakteristik rangkaian dioda
  */
 
 #include <stdio.h>
@@ -10,10 +15,11 @@
 #include <string.h>
 #include <math.h>
 
-#define MAX_LINE 1024
-#define H 0.1
-#define T0 0.0
-#define Y0 0.0
+// Konstanta untuk program
+#define MAX_LINE 1024    // Panjang maksimum baris CSV
+#define H 0.1           // Step size dasar untuk metode Taylor
+#define T0 0.0          // Waktu awal
+#define Y0 0.0          // Nilai awal
 
 /* 
  * Function declarations
@@ -26,14 +32,27 @@ double df_dy(double Is, double n, double Vt, double I);
 
 /*
  * Function to calculate resistor current
+ * Parameters:
+ * - Is: Arus saturasi dioda
+ * - n: Faktor idealitas dioda
+ * - Vt: Tegangan thermal
+ * - R: Nilai resistor
+ * - Vs: Tegangan sumber
+ * - I: Arus input
+ * Returns: Arus yang mengalir melalui resistor
  */
 double f_resistor(double Is, double n, double Vt, double R, double Vs, double I) {
+    // Menghitung tegangan dioda
     double Vd = calculate_diode_voltage(Is, n, Vt, I);
+    // Menghitung arus melalui resistor
     return (Vs - Vd) / R;
 }
 
 /* 
  * Fungsi persamaan dioda
+ * Implementasi persamaan Shockley untuk dioda:
+ * I = Is * (e^(V/nVt) - 1)
+ * dimana V adalah tegangan dioda
  */
 double f(double Is, double n, double Vt, double I) {
     return (n * Vt / Is) * log(I / Is + 1.0);
@@ -41,6 +60,7 @@ double f(double Is, double n, double Vt, double I) {
 
 /* 
  * Fungsi untuk menghitung tegangan dioda
+ * Menggunakan persamaan: V = nVt * ln(I/Is + 1)
  */
 double calculate_diode_voltage(double Is, double n, double Vt, double I) {
     return n * Vt * log(I / Is + 1.0);
@@ -48,16 +68,22 @@ double calculate_diode_voltage(double Is, double n, double Vt, double I) {
 
 /* 
  * Fungsi untuk menghitung arus rangkaian
+ * Mengimplementasikan hukum Kirchhoff untuk:
+ * 1. Rangkaian dioda tunggal
+ * 2. Rangkaian dioda-resistor
  */
 double calculate_circuit_current(double Is, double n, double Vt, double I, double R, double Vs) {
-    if (R == 0.0) return I;  // Simple diode case
+    if (R == 0.0) return I;  // Kasus dioda tunggal
     
+    // Menghitung tegangan dioda
     double Vd = calculate_diode_voltage(Is, n, Vt, I);
-    return (Vs - Vd) / R;    // Diode-resistor case
+    // Menghitung arus rangkaian untuk kasus dioda-resistor
+    return (Vs - Vd) / R;
 }
 
 /* 
- * Turunan parsial terhadap y
+ * Turunan parsial terhadap y untuk metode Taylor
+ * df/dy = (nVt)/(I + Is)
  */
 double df_dy(double Is, double n, double Vt, double I) {
     return (n * Vt) / (I + Is);
@@ -65,30 +91,39 @@ double df_dy(double Is, double n, double Vt, double I) {
 
 /* 
  * Taylor method order 2
+ * Implementasi: y(t+h) = y(t) + h*f + (h²/2)*f*df/dy
+ * Menggunakan scaling factor untuk menghindari overflow
+ * dan pembatasan nilai untuk stabilitas numerik
  */
 double taylor_method(double Is, double n, double Vt, double I, double R, double Vs) {
     double y = Y0;
     double f0 = f(Is, n, Vt, I);
     double df_dy0 = df_dy(Is, n, Vt, I);
     
+    // Menggunakan step size yang lebih kecil untuk akurasi
     double h = H / 1000.0;
     
+    // Perhitungan komponen Taylor series
     double first_order = h * f0;
     double second_order = (h * h / 2.0) * f0 * df_dy0;
     
+    // Scaling untuk menghindari overflow
     double scale = 1e-9;
     first_order *= scale;
     second_order *= scale;
     
+    // Kalkulasi hasil dan pembatasan nilai
     double result = y + first_order + second_order;
-    if (result < Is) result = Is;
-    if (result > 1.0) result = 1.0;
+    if (result < Is) result = Is;      // Batas bawah: arus saturasi
+    if (result > 1.0) result = 1.0;    // Batas atas: 1A
     
     return result;
 }
 
 /* 
  * Picard method hingga iterasi ke-3
+ * Mengimplementasikan metode iterasi Picard:
+ * y_(n+1)(t) = y₀ + ∫[t₀ to t] f(s,y_n(s))ds
  */
 void picard_method(double Is, double n, double Vt, double I, double R, double Vs, double results[3]) {
     double v_thermal = n * Vt;
@@ -113,9 +148,15 @@ void picard_method(double Is, double n, double Vt, double I, double R, double Vs
 /* 
  * Program Utama 
  * ------------
+ * Alur program:
  * 1. Baca data dari file CSV
- * 2. Proses setiap kasus (dioda/dioda-resistor)
- * 3. Tampilkan hasil perhitungan
+ * 2. Untuk setiap baris data:
+ *    - Identifikasi tipe rangkaian
+ *    - Baca parameter rangkaian
+ *    - Hitung dengan metode Taylor
+ *    - Hitung dengan metode Picard
+ *    - Hitung arus rangkaian final
+ * 3. Simpan hasil ke output.csv
  */
 int main() {
     // Buka data.csv untuk input

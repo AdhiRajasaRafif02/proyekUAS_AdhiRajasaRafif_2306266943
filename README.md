@@ -14,7 +14,7 @@ Program membaca data dari file CSV, melakukan analisis untuk dua jenis rangkaian
 - Rangkaian dioda dengan resistor
 
 ## Flowchart Program
-![Flowchart Program Analisis Diode Circuit](https://imgur.com/9NPNlVk.png)
+![Flowchart Program Analisis Diode Circuit](https://imgur.com/3yWuh2u.png)
 
 Flowchart di atas menunjukkan alur kerja program dari awal hingga akhir:
 1. Program dimulai dengan membaca data dari file CSV
