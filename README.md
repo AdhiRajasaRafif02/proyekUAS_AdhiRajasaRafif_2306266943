@@ -1,4 +1,4 @@
-# Tugas Pemrograman UAS Komputasi Numerik - Analisis Diode Circuit dengan Taylor Series dan Metode Picard
+# Tugas Proyek UAS Komputasi Numerik - Analisis Diode Circuit dengan Taylor Series dan Metode Picard
 
 ## Identitas
 - Nama: Adhi Rajasa Rafif
@@ -121,7 +121,7 @@ Program berhasil menganalisis dua jenis rangkaian:
    - Hasil perhitungan memenuhi hukum Kirchhoff
 
 ## Kesimpulan
-Implementasi menunjukkan bahwa kedua metode (Taylor Series dan Picard) dapat digunakan untuk menganalisis rangkaian dioda dengan hasil yang stabil dan masuk akal secara fisik. Program ini juga mendemonstrasikan pentingnya penanganan numerik yang tepat untuk menghindari masalah overflow dan ketidakstabilan dalam perhitungan.
+Implementasi menunjukkan bahwa kedua metode (Taylor Series dan Picard) dapat digunakan untuk menganalisis rangkaian dioda dengan hasil yang stabil. Program ini juga mendemonstrasikan pentingnya penanganan numerik yang tepat untuk menghindari masalah overflow dan ketidakstabilan dalam perhitungan.
 
 Data menunjukkan bahwa:
 1. Metode Picard konvergen dalam 3 iterasi untuk sebagian besar kasus
