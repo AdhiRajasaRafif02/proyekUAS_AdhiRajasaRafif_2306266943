@@ -30,3 +30,6 @@ diode_resistor,I_s,1.8e-12,n,1.6,V_t,0.02585,R,910,Vs,6,0.55,0.75,1e-6,100
 diode_resistor,I_s,4.5e-13,n,1.8,V_t,0.02585,R,12000,Vs,30,0.8,1.1,1e-6,100
 diode_resistor,I_s,8.5e-13,n,1.2,V_t,0.02585,R,330,Vs,3.3,0.45,0.65,1e-6,100
 diode_resistor,I_s,2.8e-12,n,2.1,V_t,0.02585,R,1800,Vs,15,0.7,0.9,1e-6,100
+diode-resistor,I_s,1e-12,n,1.5,V_t,0.02585,I,0.001,R,1000,Vs,5
+diode-resistor,I_s,2e-12,n,1.2,V_t,0.02585,I,0.002,R,500,Vs,3
+diode-resistor,I_s,5e-13,n,1.7,V_t,0.02585,I,0.0005,R,2000,Vs,10
